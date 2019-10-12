@@ -9,28 +9,23 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import models
 from PIL import Image
 
-
 if torch.cuda.is_available():
     torch.backends.cudnn.deterministic = True
 
 path = 'E:/Code/Python/vgg/'
 
-"""
-加载数据
-"""
-
 # Device
 DEVICE = torch.device("cuda:3" if torch.cuda.is_available() else "cpu")
 print('Device:', DEVICE)
 
-# 超参数
+# hyperparameter
 random_seed = 1
 learning_rate = 0.001
 num_epochs = 15
 batch_size = 10
 
-num_classes = 4  # 类别
-IMG_SIZE = (32, 32)   # 将图片统一大小
+num_classes = 4  # class number
+IMG_SIZE = (32, 32)   # resize image
 # IMG_MEAN = [0.485, 0.456, 0.406]
 # IMG_STD = [0.229, 0.224, 0.225]
 
@@ -56,7 +51,7 @@ class MyDataset(Dataset):
             self.target_transform = target_transform
 
     def __getitem__(self, index):
-        f, label = self.imgs[index]  # f 为图片名称
+        f, label = self.imgs[index]
         img = Image.open(self.root + f).convert('RGB')
 
         if self.transform is not None:
@@ -75,7 +70,7 @@ test_loader = DataLoader(test_data, batch_size=batch_size)
 
 
 """
-初始化模型
+initial model
 """
 model = models.vgg16(pretrained=True)
 for param in model.parameters():
@@ -88,9 +83,8 @@ criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.classifier.parameters(), lr=learning_rate)
 # optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-
 """
-训练
+train
 """
 for epoch in range(num_epochs):
     start = time.perf_counter()
@@ -118,9 +112,8 @@ for epoch in range(num_epochs):
     print('Time: {:.2f}s'.format(end - start))
 print('Finished training!')
 
-
 """
-测试
+test
 """
 test_loss = 0.0
 correct_pred = 0
