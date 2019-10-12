@@ -8,29 +8,23 @@ from torchvision import transforms
 from torch.utils.data import DataLoader
 from PIL import Image
 
-
 if torch.cuda.is_available():
     torch.backends.cudnn.deterministic = True
 
-path = 'F:/Code/Python/A_learn/task_2/'
-
-"""
-加载数据
-"""
-
+path = 'path/to/the/master'
 
 # Device
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print('Device:', DEVICE)
 
-# 超参数
+# hyperparameter
 # random_seed = 1
 learning_rate = 0.00005
 num_epochs = 50
 batch_size = 10
 
 num_classes = 4
-IMG_SIZE = (32, 32)   # 将图片统一大小
+IMG_SIZE = (32, 32)   # resize image
 # IMG_MEAN = [0.485, 0.456, 0.406]
 # IMG_STD = [0.229, 0.224, 0.225]
 
@@ -56,7 +50,7 @@ class MyDataset(torch.utils.data.Dataset):
             self.target_transform = target_transform
 
     def __getitem__(self, index):
-        f, label = self.imgs[index]  # f 为图片名称
+        f, label = self.imgs[index]  
         img = Image.open(self.root + f).convert('RGB')
 
         if self.transform is not None:
@@ -243,9 +237,8 @@ model = model.to(DEVICE)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-
 """
-训练
+train
 """
 for epoch in range(num_epochs):
     start = time.perf_counter()
@@ -273,12 +266,12 @@ for epoch in range(num_epochs):
     print('Time: {:.2f}s'.format(end - start))
 print('Finished training!')
 
-
 """
-测试
+test
 """
 test_loss = 0.0
 correct_pred = 0
+model.eval()
 for _, data in enumerate(test_loader):
     image, label = data
     image = image.to(DEVICE)
